@@ -1,0 +1,5 @@
+#EXTM3U
+#EXTINF:-1 xui-id="{XUI_ID}" tvg-id="" tvg-name="✦●✦ NORTH COMEDY ✦●✦" tvg-logo="https://www.lyngsat.com/logo/flag/az/nl.png" group-title="NL ⭐ KINDEREN",✦●✦ NORTH COMEDY ✦●✦
+https://app.viloud.tv/hls/channel/09368cef97b0a015a45970bea736e8e0.m3u8
+#EXTINF:-1 xui-id="{XUI_ID}" tvg-id="nickelodeon.gr" tvg-name="NL | NORTH COMEDY HD" tvg-logo="https://i.imgur.com/9mrCKzN.png" group-title="NL ⭐ KINDEREN",NL | NORTH COMEDY
+https://app.viloud.tv/hls/channel/09368cef97b0a015a45970bea736e8e0.m3u8

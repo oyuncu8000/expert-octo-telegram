@@ -1,0 +1,21 @@
+{
+  "name": "WoxPlusTV",
+  "short_name": "WoxPlus",
+  "description": "En güncel filmleri izle.",
+  "start_url": "index.php",
+  "display": "standalone",
+  "background_color": "#1a1a1a",
+  "theme_color": "#ff0000",
+  "icons": [
+    {
+      "src": "https://yourfiles.cloud/uploads/ded011ea36634b1c9c4b624c85af98bf/Ads%C4%B1z%20tasar%C4%B1m%20%2818%29.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "https://yourfiles.cloud/uploads/ded011ea36634b1c9c4b624c85af98bf/Ads%C4%B1z%20tasar%C4%B1m%20%2818%29.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

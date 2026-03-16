@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Modern Iframe Entegrasyonu</title>
+    <style>
+        /* Modern Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Full screen body */
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden; /* Sayfa kaydırmasını engelle */
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        }
+
+        /* Ana container - tam ekran */
+        .iframe-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        /* Iframe stilleri */
+        .modern-iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            display: block;
+            background: white;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Yükleme animasyonu - isteğe bağlı */
+        .iframe-loader {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            z-index: 10;
+            pointer-events: none;
+        }
+
+        .loader-spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Sayfa yüklendiğinde loader'ı gizle */
+        .iframe-container.loaded .iframe-loader {
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            visibility: hidden;
+        }
+    </style>
+</head>
+<body>
+    <div class="iframe-container" id="iframeContainer">
+        <!-- Yükleme animasyonu -->
+        <div class="iframe-loader">
+            <div class="loader-spinner"></div>
+            <p style="color: white; margin-top: 15px; font-weight: 300;">Yükleniyor...</p>
+        </div>
+
+        <!-- Ana Iframe - Buraya gömmek istediğiniz sayfanın URL'sini yazın -->
+        <iframe 
+            class="modern-iframe" 
+            src="http://woxplus.ct.ws/" 
+            title="WOXPlus"
+            loading="lazy"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen>
+            <p>Tarayıcınız iframe desteklemiyor.</p>
+        </iframe>
+    </div>
+
+    <script>
+        // Iframe yüklendiğinde loader'ı gizle
+        const iframeContainer = document.getElementById('iframeContainer');
+        const iframe = document.querySelector('.modern-iframe');
+
+        if (iframe) {
+            iframe.addEventListener('load', function() {
+                iframeContainer.classList.add('loaded');
+            });
+        }
+
+        // Responsive kontrolü - ekran boyutu değiştiğinde iframe'i güncelle
+        window.addEventListener('resize', function() {
+            // İsteğe bağlı: iframe yeniden boyutlandırma işlemleri
+            console.log('Ekran boyutu değişti, iframe otomatik uyum sağlayacak');
+        });
+
+        // Güvenlik için bazı siteler iframe'de görüntülenmeyi engelleyebilir
+        // Bu durumda konsola uyarı yazdır
+        window.addEventListener('message', function(event) {
+            // Iframe içinden gelen mesajları dinle
+            console.log('Iframe mesajı:', event.data);
+        });
+    </script>
+</body>
+</html>

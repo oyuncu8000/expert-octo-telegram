@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modern Video Player - Karanlık Tema</title>
+    <style>
+        /* Genel Stil Ayarları */
+        body {
+            background-color: #0f172a; /* Çok koyu lacivert/siyah */
+            color: #f1f5f9;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h2 {
+            color: #38bdf8;
+            margin-bottom: 20px;
+            font-weight: 300;
+        }
+
+        /* Video Player Konteyneri */
+        .video-container {
+            width: 100%;
+            max-width: 900px;
+            aspect-ratio: 16 / 9;
+            background: #000;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            border: 1px solid #1e293b;
+        }
+
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        /* Bölüm Seçme Alanı */
+        .controls {
+            margin-top: 30px;
+            width: 100%;
+            max-width: 900px;
+            text-align: center;
+        }
+
+        .episode-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+            gap: 10px;
+            background: #1e293b;
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid #334155;
+        }
+
+        /* Bölüm Butonları */
+        .episode-btn {
+            background-color: #334155;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+
+        .episode-btn:hover {
+            background-color: #38bdf8;
+            transform: translateY(-2px);
+        }
+
+        .episode-btn.active {
+            background-color: #38bdf8;
+            box-shadow: 0 0 15px rgba(56, 189, 248, 0.5);
+        }
+
+        .status-text {
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+            color: #94a3b8;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Video Oynatıcı</h2>
+    
+    <p class="status-text">Şu an izlenen: <span id="current-ep-text" style="color: #38bdf8;">Bölüm 1</span></p>
+
+    <div class="video-container">
+        <iframe id="video-player" src="https://xk4l.mzt4pr8wlkxnv0qsha5g.website/watch/65930/1/1" allowfullscreen></iframe>
+    </div>
+
+    <div class="controls">
+        <h3 style="text-align: left; font-size: 1.1rem; margin-bottom: 15px;">Bölümler</h3>
+        <div class="episode-grid" id="episode-grid">
+            </div>
+    </div>
+
+    <script>
+        const baseUrl = "https://xk4l.mzt4pr8wlkxnv0qsha5g.website/watch/65930/1";
+        const player = document.getElementById('video-player');
+        const grid = document.getElementById('episode-grid');
+        const statusText = document.getElementById('current-ep-text');
+
+        // 1'den 20'ye kadar butonları oluştur
+        for (let i = 1; i <= 20; i++) {
+            const btn = document.createElement('button');
+            btn.innerText = i;
+            btn.classList.add('episode-btn');
+            if (i === 1) btn.classList.add('active'); // İlk bölümü aktif işaretle
+
+            btn.onclick = function() {
+                // Iframe kaynağını değiştir
+                player.src = baseUrl + i;
+                
+                // Aktif buton stilini güncelle
+                document.querySelectorAll('.episode-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                
+                // Yazıyı güncelle
+                statusText.innerText = "Bölüm " + i;
+                
+                // Sayfayı yukarı kaydır (opsiyonel)
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            };
+
+            grid.appendChild(btn);
+        }
+    </script>
+
+</body>
+</html>

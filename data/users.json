@@ -1,0 +1,14 @@
+{
+    "test@test.com": {
+        "email": "test@test.com",
+        "expires": 1776273975,
+        "created_at": 1773681975,
+        "stripe_id": "manual_test"
+    },
+    "tvfiremax@gmail.com": {
+        "email": "tvfiremax@gmail.com",
+        "sifre": "$2y$10$v.RbOkEENw.TDoFWBT7oG.OfEWhh1SpUsvia1a.nJ4VRaeSabmFuK",
+        "expires": 0,
+        "created_at": 1773682030
+    }
+}

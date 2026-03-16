@@ -1,0 +1,18 @@
+[package]
+name = "dot644971/woxplus"
+version = "0.1.47"
+description = "woxplus PHP app"
+
+[dependencies]
+"php/php" = "8.3.*"
+
+[fs]
+"/app" = "."
+
+[[command]]
+name = "run"
+module = "php/php:php"
+runner = "wasi"
+
+[command.annotations.wasi]
+main-args = ["-t", "/app", "-S", "localhost:8080"]

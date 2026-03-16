@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Full Page iFrame</title>
+  <style>
+    /* Sayfa ve iframe sıfırlama */
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      width: 100%;
+      overflow: hidden; /* Ana sayfada kaydırmayı kapat */
+    }
+    iframe {
+      border: none;       /* Çerçeveyi kaldır */
+      width: 100vw;       /* Yatay olarak tam ekran */
+      height: 100vh;      /* Dikey olarak tam ekran */
+      display: block;     /* Gereksiz boşlukları kaldır */
+    }
+  </style>
+</head>
+<body>
+  <iframe src="https://teveboxplus.xo.je" 
+          title="Tam Sayfa iFrame"
+          allowfullscreen
+          sandbox="allow-scripts allow-same-origin allow-popups">
+  </iframe>
+</body>
+</html>

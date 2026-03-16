@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ultimate Pro Player</title>
+    <script src="https://www.gstatic.com/cv/js/sender/v1/cast_sender.js?loadCastFramework=1"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root {
+            --accent: #3b82f6;
+            --bg: #000000;
+            --panel-bg: rgba(15, 15, 15, 0.95);
+        }
+
+        body, html {
+            margin: 0; padding: 0;
+            width: 100%; height: 100%;
+            background: #000; color: white;
+            font-family: 'Inter', -apple-system, sans-serif;
+            overflow: hidden;
+        }
+
+        /* Fullscreen Container */
+        .player-wrapper {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            overflow: hidden;
+        }
+
+        video {
+            width: 100%;
+            height: 100%;
+            object-fit: contain; /* Sinema modu için contain */
+        }
+
+        /* Kontrol Katmanı */
+        .ui-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(0deg, rgba(0,0,0,0.9) 0%, transparent 40%, rgba(0,0,0,0.4) 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 40px;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            z-index: 10;
+        }
+
+        .player-wrapper:hover .ui-overlay { opacity: 1; }
+
+        /* Gelişmiş Bölüm Menüsü (Sağdan Kayan) */
+        .side-panel {
+            position: absolute;
+            right: -380px;
+            top: 0;
+            bottom: 0;
+            width: 350px;
+            background: var(--panel-bg);
+            backdrop-filter: blur(30px);
+            z-index: 100;
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            padding: 30px;
+            box-shadow: -10px 0 30px rgba(0,0,0,0.5);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .side-panel.open { transform: translateX(-380px); }
+
+        .episode-card {
+            display: flex;
+            gap: 15px;
+            padding: 12px;
+            margin-bottom: 15px;
+            border-radius: 12px;
+            background: rgba(255,255,255,0.03);
+            cursor: pointer;
+            border: 1px solid transparent;
+            transition: 0.3s;
+        }
+
+        .episode-card:hover {
+            background: rgba(59, 130, 246, 0.2);
+            border-color: var(--accent);
+        }
+
+        .episode-card img {
+            width: 100px;
+            height: 60px;
+            border-radius: 6px;
+            object-fit: cover;
+        }
+
+        /* Cast Butonu Özel Stili */
+        google-cast-launcher {
+            --connected-color: #4ade80;
+            --disconnected-color: #ffffff;
+            width: 32px;
+            height: 32px;
+            cursor: pointer;
+        }
+
+        /* Alt Kontroller */
+        .controls-bottom { width: 100%; }
+        
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(0, 255, 232, 0.1);
+            border-radius: 4px;
+            margin-bottom: 25px;
+            cursor: pointer;
+            overflow: hidden;
+        }
+
+        .progress-inner {
+            height: 100%;
+            width: 0%;
+            background: var(--accent);
+            transition: width 0.1s linear;
+        }
+
+        .actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .btn-row { display: flex; align-items: center; gap: 30px; }
+        
+        button {
+            background: none; border: none; color: white;
+            cursor: pointer; opacity: 0.8; transition: 0.3s;
+        }
+
+        button:hover { opacity: 1; transform: scale(1.1); color: var(--accent); }
+    </style>
+</head>
+<body>
+
+<div class="player-wrapper" id="player">
+    <video id="video-tag" src="https://yourfiles.cloud/uploads/5109caff497b26aef3d6eb1fe730c21f/tevebox.mp4"></video>
+
+    <div class="ui-overlay">
+        <div class="top">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <h2 id="current-title" style="margin:0">Big Buck Bunny</h2>
+                    <span style="opacity:0.6">4K Ultra HD • Modern Player</span>
+                </div>
+                <div class="btn-row">
+                    <google-cast-launcher id="cast-button"></google-cast-launcher>
+                    <button onclick="toggleMenu()"><i data-lucide="list-video"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <div class="controls-bottom">
+            <div class="progress-bar" id="seek-bar">
+                <div class="progress-inner" id="progress-line"></div>
+            </div>
+            <div class="actions">
+                <div class="btn-row">
+                    <button id="play-pause"><i data-lucide="play"></i></button>
+                    <button onclick="changeTime(-10)"><i data-lucide="rotate-ccw"></i></button>
+                    <button onclick="changeTime(10)"><i data-lucide="rotate-cw"></i></button>
+                    <span id="time-label">00:00 / 00:00</span>
+                </div>
+                <div class="btn-row">
+                    <button onclick="toggleMute()"><i data-lucide="volume-2" id="vol-icon"></i></button>
+                    <button id="full-btn"><i data-lucide="maximize"></i></button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="side-panel" id="side-menu">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:30px;">
+            <h3 style="margin:0">Bölümler</h3>
+            <button onclick="toggleMenu()"><i data-lucide="x"></i></button>
+        </div>
+        
+        <div class="episode-card" onclick="loadVideo('Big Buck Bunny', 'https://yourfiles.cloud/uploads/e50a3605a2710a9d399b92d12db1f9e3/y48sd87hn217%20%281%29.mp4')">
+            <img src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/BigBuckBunny.jpg">
+            <div>
+                <strong>Bölüm 1</strong>
+                <div style="font-size:0.8rem; opacity:0.6">Giriş ve Macera</div>
+            </div>
+        </div>
+
+        <div class="episode-card" onclick="loadVideo('Elephants Dream', 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4')">
+            <img src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/ElephantsDream.jpg">
+            <div>
+                <strong>Bölüm 2</strong>
+                <div style="font-size:0.8rem; opacity:0.6">Rüyalar Dünyası</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    lucide.createIcons();
+
+    const video = document.getElementById('video-tag');
+    const playBtn = document.getElementById('play-pause');
+    const sideMenu = document.getElementById('side-menu');
+    const progressLine = document.getElementById('progress-line');
+
+    // Google Cast Ayarı
+    window.__onGCastApiAvailable = function(isAvailable) {
+        if (isAvailable) {
+            cast.framework.CastContext.getInstance().setOptions({
+                receiverApplicationId: chrome.cast.media.DEFAULT_MEDIA_RECEIVER_APP_ID,
+                autoJoinPolicy: chrome.cast.AutoJoinPolicy.ORIGIN_SCOPED
+            });
+        }
+    };
+
+    // Bölüm Menüsü
+    function toggleMenu() {
+        sideMenu.classList.toggle('open');
+    }
+
+    function loadVideo(title, src) {
+        video.src = src;
+        document.getElementById('current-title').innerText = title;
+        video.play();
+        toggleMenu();
+        updatePlayIcon(true);
+    }
+
+    // Video Kontrolleri
+    playBtn.onclick = () => {
+        if(video.paused) { video.play(); updatePlayIcon(true); }
+        else { video.pause(); updatePlayIcon(false); }
+    };
+
+    function updatePlayIcon(isPlaying) {
+        playBtn.innerHTML = isPlaying ? '<i data-lucide="pause"></i>' : '<i data-lucide="play"></i>';
+        lucide.createIcons();
+    }
+
+    video.ontimeupdate = () => {
+        const p = (video.currentTime / video.duration) * 100;
+        progressLine.style.width = p + '%';
+        
+        const cur = formatTime(video.currentTime);
+        const dur = formatTime(video.duration || 0);
+        document.getElementById('time-label').innerText = `${cur} / ${dur}`;
+    };
+
+    function formatTime(sec) {
+        let m = Math.floor(sec/60);
+        let s = Math.floor(sec%60);
+        return `${m}:${s<10?'0':''}${s}`;
+    }
+
+    function changeTime(val) { video.currentTime += val; }
+
+    // Tam Ekran
+    document.getElementById('full-btn').onclick = () => {
+        if(!document.fullscreenElement) document.getElementById('player').requestFullscreen();
+        else document.exitFullscreen();
+    };
+
+    // Progress Bar Tıklama
+    document.getElementById('seek-bar').onclick = (e) => {
+        const rect = e.target.getBoundingClientRect();
+        const pos = (e.clientX - rect.left) / rect.width;
+        video.currentTime = pos * video.duration;
+    };
+</script>
+
+</body>
+</html>

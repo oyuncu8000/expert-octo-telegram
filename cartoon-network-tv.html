@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CN Türkiye | 7/24 Canlı Yayın</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bangers&family=Nunito:wght@400;600;700;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --cn-black: #07080F;
+  --cn-yellow: #FFE000;
+  --cn-orange: #FF6B00;
+  --cn-blue: #00CFFF;
+  --cn-pink: #FF3CAC;
+  --cn-green: #00FF88;
+  --cn-white: #FFFFFF;
+  --panel: rgba(255,255,255,0.04);
+  --border: rgba(255,255,255,0.08);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--cn-black);color:var(--cn-white);font-family:'Nunito',sans-serif;min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 80% 50% at 20% 20%,rgba(0,207,255,.07) 0%,transparent 60%),radial-gradient(ellipse 60% 40% at 80% 80%,rgba(255,60,172,.07) 0%,transparent 60%);pointer-events:none;z-index:0}
+
+/* TICKER */
+.ticker{position:relative;z-index:20;background:linear-gradient(90deg,var(--cn-orange),#FF0080,var(--cn-orange));background-size:200%;animation:tickerBg 4s linear infinite;padding:7px 0;overflow:hidden}
+@keyframes tickerBg{0%{background-position:0%}100%{background-position:200%}}
+.ticker-track{display:flex;animation:tickMove 55s linear infinite;white-space:nowrap;font-family:'Bangers',cursive;font-size:14px;letter-spacing:2px;color:#fff}
+.ticker-track span{padding:0 28px}
+.ticker-track .dot{color:rgba(255,255,255,.4)}
+@keyframes tickMove{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+
+/* TOPBAR */
+.topbar{position:relative;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:10px 22px;background:rgba(7,8,15,.95);backdrop-filter:blur(16px);border-bottom:2px solid rgba(255,224,0,.3)}
+.logo-area{display:flex;align-items:center;gap:12px}
+.logo-box{width:54px;height:54px;background:#000;border:3px solid #fff;display:flex;align-items:center;justify-content:center;font-family:'Bangers',cursive;font-size:20px;letter-spacing:-1px;transform:rotate(-4deg);box-shadow:5px 5px 0 var(--cn-yellow);flex-shrink:0;position:relative;overflow:hidden}
+.logo-box::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,transparent 60%,rgba(255,224,0,.2) 60%)}
+.brand-name{font-family:'Bangers',cursive;font-size:clamp(16px,3.5vw,26px);letter-spacing:3px;color:var(--cn-yellow);text-shadow:2px 2px 0 #000;line-height:1.1}
+.brand-sub{font-size:9px;letter-spacing:4px;text-transform:uppercase;color:var(--cn-blue);font-weight:700}
+.topbar-right{display:flex;align-items:center;gap:12px;flex-wrap:wrap;justify-content:flex-end}
+.live-pill{display:flex;align-items:center;gap:7px;background:#E50000;color:#fff;font-weight:900;font-size:12px;letter-spacing:2px;padding:6px 12px;border-radius:4px;animation:liveglow 2s ease-in-out infinite}
+@keyframes liveglow{0%,100%{box-shadow:0 0 6px rgba(229,0,0,.4)}50%{box-shadow:0 0 18px rgba(229,0,0,.9)}}
+.live-dot{width:7px;height:7px;border-radius:50%;background:#fff;animation:blink 1s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+.clock{font-family:'Bangers',cursive;font-size:clamp(15px,3vw,20px);letter-spacing:3px;color:var(--cn-blue);text-shadow:0 0 12px rgba(0,207,255,.5)}
+.day-badge{font-size:10px;font-weight:900;letter-spacing:2px;color:var(--cn-yellow);background:rgba(255,224,0,.1);border:1px solid rgba(255,224,0,.3);padding:4px 10px;border-radius:20px;text-transform:uppercase}
+
+/* LAYOUT */
+.layout{position:relative;z-index:10;max-width:1440px;margin:0 auto;padding:18px 16px;display:grid;grid-template-columns:1fr 400px;gap:18px}
+@media(max-width:1100px){.layout{grid-template-columns:1fr}}
+.video-col{display:flex;flex-direction:column;gap:14px}
+
+/* VIDEO */
+.video-frame{position:relative;border-radius:14px;overflow:hidden;border:2px solid rgba(255,224,0,.4);box-shadow:0 0 50px rgba(255,224,0,.12),0 24px 60px rgba(0,0,0,.7)}
+.video-ratio{position:relative;width:100%;padding-bottom:56.25%;background:#000}
+.video-ratio #ytplayer{position:absolute;inset:0;width:100%;height:100%;border:none}
+.vid-loading{position:absolute;inset:0;z-index:5;background:#000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px}
+.vid-loading.hidden{display:none}
+.ld-logo{font-family:'Bangers',cursive;font-size:70px;color:var(--cn-yellow);text-shadow:4px 4px 0 rgba(0,0,0,.6),0 0 30px rgba(255,224,0,.4);animation:logoRock .5s ease-in-out infinite alternate}
+@keyframes logoRock{from{transform:rotate(-4deg) scale(.95)}to{transform:rotate(4deg) scale(1.05)}}
+.ld-spin{width:34px;height:34px;border:3px solid rgba(255,224,0,.2);border-top-color:var(--cn-yellow);border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.ld-txt{font-family:'Bangers',cursive;font-size:14px;letter-spacing:4px;color:rgba(255,255,255,.4)}
+
+/* NOW PLAYING */
+.now-card{background:var(--panel);border:1.5px solid var(--border);border-radius:14px;padding:16px 20px;display:flex;flex-direction:column;gap:10px}
+.now-top{display:flex;align-items:center;gap:14px}
+.now-emoji{width:52px;height:52px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0;background:rgba(255,255,255,.05);animation:emojiFloat 3s ease-in-out infinite}
+@keyframes emojiFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+.now-texts{flex:1;min-width:0}
+.now-label{font-size:9px;letter-spacing:4px;text-transform:uppercase;color:var(--cn-yellow);font-weight:900;margin-bottom:3px}
+.now-title{font-family:'Bangers',cursive;font-size:clamp(18px,4vw,28px);letter-spacing:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.now-meta{font-size:11px;color:rgba(255,255,255,.4);font-weight:700;margin-top:2px}
+.prog-bar-bg{height:7px;background:rgba(255,255,255,.08);border-radius:10px;overflow:hidden}
+.prog-bar-fg{height:100%;border-radius:10px;background:linear-gradient(90deg,var(--cn-yellow),var(--cn-orange));box-shadow:0 0 10px rgba(255,180,0,.5);transition:width 1s linear}
+.prog-times{display:flex;justify-content:space-between;font-size:10px;color:rgba(255,255,255,.3);font-weight:700;margin-top:5px}
+.now-next{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:10px;background:rgba(0,207,255,.06);border:1px solid rgba(0,207,255,.15)}
+.next-label{font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--cn-blue);font-weight:900}
+.next-info{font-size:12px;font-weight:700;color:rgba(255,255,255,.7);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.next-time{font-family:'Bangers',cursive;font-size:16px;color:var(--cn-blue);letter-spacing:2px;flex-shrink:0}
+
+/* STATS */
+.stats-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+@media(max-width:500px){.stats-strip{grid-template-columns:repeat(2,1fr)}}
+.stat-box{background:var(--panel);border:1.5px solid var(--border);border-radius:12px;padding:12px 14px;text-align:center}
+.stat-val{font-family:'Bangers',cursive;font-size:20px;color:var(--cn-yellow);letter-spacing:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.stat-lbl{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,.3);font-weight:700;margin-top:2px}
+
+/* EMBED */
+.embed-card{background:var(--panel);border:1.5px solid rgba(0,207,255,.2);border-radius:12px;overflow:hidden}
+.embed-head{display:flex;align-items:center;justify-content:space-between;padding:11px 16px;background:rgba(0,207,255,.07);border-bottom:1px solid rgba(0,207,255,.15)}
+.embed-head-title{font-family:'Bangers',cursive;font-size:15px;letter-spacing:2px;color:var(--cn-blue)}
+.btn-copy{padding:6px 14px;border:1.5px solid var(--cn-blue);border-radius:7px;background:rgba(0,207,255,.1);color:var(--cn-blue);font-weight:900;font-size:11px;letter-spacing:1px;cursor:pointer;transition:all .2s}
+.btn-copy:hover{background:rgba(0,207,255,.2);transform:translateY(-1px)}
+.embed-body{padding:14px 16px;font-family:'Courier New',monospace;font-size:11px;color:rgba(0,207,255,.6);line-height:1.6;word-break:break-all;user-select:all}
+
+/* SIDEBAR */
+.sidebar{display:flex;flex-direction:column;gap:14px}
+.api-card{background:var(--panel);border:1.5px solid rgba(255,224,0,.2);border-radius:14px;padding:18px;display:flex;flex-direction:column;gap:10px}
+.api-title{font-family:'Bangers',cursive;font-size:17px;letter-spacing:2px;color:var(--cn-yellow);display:flex;align-items:center;gap:8px}
+.api-row{display:flex;gap:8px}
+.api-input{flex:1;background:rgba(255,255,255,.05);border:1.5px solid rgba(255,224,0,.2);border-radius:9px;padding:10px 14px;color:#fff;font-family:'Nunito',sans-serif;font-size:13px;outline:none;transition:border-color .2s}
+.api-input:focus{border-color:var(--cn-yellow)}
+.api-input::placeholder{color:rgba(255,255,255,.25)}
+.btn-connect{padding:10px 18px;border:none;border-radius:9px;background:linear-gradient(135deg,var(--cn-yellow),var(--cn-orange));color:#000;font-family:'Bangers',cursive;font-size:16px;letter-spacing:1px;cursor:pointer;transition:all .2s;white-space:nowrap}
+.btn-connect:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(255,180,0,.3)}
+.api-msg{font-size:11px;padding:8px 12px;border-radius:8px;display:none}
+.api-msg.show{display:block}
+.api-msg.err{background:rgba(255,60,60,.1);color:#ff6b6b;border:1px solid rgba(255,60,60,.2)}
+.api-msg.ok{background:rgba(0,255,136,.1);color:var(--cn-green);border:1px solid rgba(0,255,136,.2)}
+.api-hint{font-size:10px;color:rgba(255,255,255,.25);line-height:1.7}
+.api-hint a{color:var(--cn-blue);text-decoration:none}
+
+/* SCHEDULE CARD */
+.sched-card{background:var(--panel);border:1.5px solid var(--border);border-radius:14px;overflow:hidden}
+.sched-head{background:linear-gradient(135deg,var(--cn-yellow),var(--cn-orange));padding:13px 18px;display:flex;align-items:center;gap:10px}
+.sched-head-text{font-family:'Bangers',cursive;font-size:18px;letter-spacing:2px;color:#000}
+.sched-day-tabs{display:flex;background:rgba(0,0,0,.3);border-bottom:1px solid var(--border);overflow-x:auto;scrollbar-width:none}
+.sched-day-tabs::-webkit-scrollbar{display:none}
+.day-tab{flex:1;min-width:0;padding:9px 6px;font-family:'Bangers',cursive;font-size:13px;letter-spacing:1px;color:rgba(255,255,255,.35);cursor:pointer;text-align:center;border-bottom:2px solid transparent;transition:all .2s;white-space:nowrap}
+.day-tab.active{color:var(--cn-yellow);border-bottom-color:var(--cn-yellow)}
+.day-tab:hover:not(.active){color:rgba(255,255,255,.6)}
+.sched-list{max-height:500px;overflow-y:auto;scrollbar-width:thin;scrollbar-color:rgba(255,224,0,.3) transparent}
+.sched-list::-webkit-scrollbar{width:3px}
+.sched-list::-webkit-scrollbar-thumb{background:rgba(255,224,0,.3);border-radius:3px}
+.sched-item{display:flex;align-items:center;gap:12px;padding:13px 18px;border-bottom:1px solid rgba(255,255,255,.04);cursor:pointer;transition:background .15s;position:relative}
+.sched-item:hover{background:rgba(255,255,255,.03)}
+.sched-item.active{background:rgba(255,224,0,.07);border-left:3px solid var(--cn-yellow)}
+.sched-item.past{opacity:.35}
+.playing-anim{position:absolute;right:14px;display:flex;gap:2px;align-items:flex-end}
+.playing-anim span{width:3px;border-radius:2px;background:var(--cn-yellow);animation:bar .9s ease-in-out infinite}
+.playing-anim span:nth-child(1){height:8px;animation-delay:0s}
+.playing-anim span:nth-child(2){height:14px;animation-delay:.2s}
+.playing-anim span:nth-child(3){height:10px;animation-delay:.1s}
+@keyframes bar{0%,100%{transform:scaleY(.4)}50%{transform:scaleY(1)}}
+.si-time{font-family:'Bangers',cursive;font-size:17px;letter-spacing:1px;color:var(--cn-blue);min-width:44px;flex-shrink:0}
+.sched-item.active .si-time{color:var(--cn-yellow)}
+.si-emoji{font-size:22px;flex-shrink:0}
+.si-info{flex:1;min-width:0}
+.si-name{font-size:13px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:rgba(255,255,255,.85)}
+.sched-item.active .si-name{color:var(--cn-yellow)}
+.si-dur{font-size:10px;color:rgba(255,255,255,.3);font-weight:700;margin-top:2px}
+
+footer{position:relative;z-index:10;text-align:center;padding:18px;font-size:10px;color:rgba(255,255,255,.15);letter-spacing:2px;border-top:1px solid rgba(255,255,255,.04);margin-top:10px}
+</style>
+</head>
+<body>
+
+<div class="ticker">
+  <div class="ticker-track">
+    <span>📺 CN TÜRKİYE 7/24 CANLI YAYIN</span><span class="dot">◆</span><span>Ben 10</span><span class="dot">◆</span><span>Gumball'ın Müthiş Dünyası</span><span class="dot">◆</span><span>Powerpuff Girls</span><span class="dot">◆</span><span>Steven Universe</span><span class="dot">◆</span><span>Adventure Time</span><span class="dot">◆</span><span>Regular Show</span><span class="dot">◆</span><span>Dexter'ın Laboratuvarı</span><span class="dot">◆</span><span>Johnny Bravo</span><span class="dot">◆</span><span>Ed Edd n Eddy</span><span class="dot">◆</span><span>Korkak Cesur Köpek</span><span class="dot">◆</span><span>Chowder</span><span class="dot">◆</span><span>Adventure Time</span><span class="dot">◆</span>
+    <span>📺 CN TÜRKİYE 7/24 CANLI YAYIN</span><span class="dot">◆</span><span>Ben 10</span><span class="dot">◆</span><span>Gumball'ın Müthiş Dünyası</span><span class="dot">◆</span><span>Powerpuff Girls</span><span class="dot">◆</span><span>Steven Universe</span><span class="dot">◆</span><span>Adventure Time</span><span class="dot">◆</span><span>Regular Show</span><span class="dot">◆</span><span>Dexter'ın Laboratuvarı</span><span class="dot">◆</span><span>Johnny Bravo</span><span class="dot">◆</span><span>Ed Edd n Eddy</span><span class="dot">◆</span><span>Korkak Cesur Köpek</span><span class="dot">◆</span><span>Chowder</span><span class="dot">◆</span><span>Adventure Time</span><span class="dot">◆</span>
+  </div>
+</div>
+
+<div class="topbar">
+  <div class="logo-area">
+    <div class="logo-box">CN</div>
+    <div>
+      <div class="brand-name">Cartoon Network</div>
+      <div class="brand-sub">Türkiye &nbsp;•&nbsp; 7/24 Canlı</div>
+    </div>
+  </div>
+  <div class="topbar-right">
+    <div class="day-badge" id="dayBadge">—</div>
+    <div class="live-pill"><div class="live-dot"></div>CANLI</div>
+    <div class="clock" id="clockEl">--:--:--</div>
+  </div>
+</div>
+
+<div class="layout">
+  <div class="video-col">
+
+    <div class="video-frame">
+      <div class="video-ratio">
+        <div class="vid-loading" id="vidLoading">
+          <div class="ld-logo">CN</div>
+          <div class="ld-spin"></div>
+          <div class="ld-txt">API ANAHTARI BEKLENİYOR</div>
+        </div>
+        <div id="ytplayer"></div>
+      </div>
+    </div>
+
+    <div class="now-card">
+      <div class="now-top">
+        <div class="now-emoji" id="nowEmoji">📺</div>
+        <div class="now-texts">
+          <div class="now-label">Şu An Yayında</div>
+          <div class="now-title" id="nowTitle">API Anahtarı Bekleniyor</div>
+          <div class="now-meta" id="nowMeta">Sağ panelden YouTube API anahtarınızı girin</div>
+        </div>
+      </div>
+      <div>
+        <div class="prog-bar-bg"><div class="prog-bar-fg" id="progFg" style="width:0%"></div></div>
+        <div class="prog-times"><span id="progElapsed">0:00</span><span id="progTotal">0:00</span></div>
+      </div>
+      <div class="now-next">
+        <span class="next-label">Sonraki</span>
+        <span class="next-info" id="nextInfo">—</span>
+        <span class="next-time" id="nextTime">—</span>
+      </div>
+    </div>
+
+    <div class="stats-strip">
+      <div class="stat-box"><div class="stat-val">7/24</div><div class="stat-lbl">Kesintisiz</div></div>
+      <div class="stat-box"><div class="stat-val" id="statEmoji">📺</div><div class="stat-lbl">Şu An</div></div>
+      <div class="stat-box"><div class="stat-val" id="statNext">—</div><div class="stat-lbl">Sonraki</div></div>
+      <div class="stat-box"><div class="stat-val">TR</div><div class="stat-lbl">Türkçe</div></div>
+    </div>
+
+    <div class="embed-card">
+      <div class="embed-head">
+        <div class="embed-head-title">🔗 Embed / iFrame Kodu</div>
+        <button class="btn-copy" onclick="copyEmbed()">📋 Kopyala</button>
+      </div>
+      <div class="embed-body" id="embedBody">—</div>
+    </div>
+
+  </div>
+
+  <div class="sidebar">
+
+    <div class="api-card">
+      <div class="api-title">🔑 YouTube API Anahtarı</div>
+      <div class="api-row">
+        <input class="api-input" type="password" id="apiInput" placeholder="AIzaSy... buraya girin">
+        <button class="btn-connect" onclick="connectApi()">BAĞLAN</button>
+      </div>
+      <div class="api-msg" id="apiMsg"></div>
+      <div class="api-hint">
+        <b>Nasıl alınır?</b><br>
+        <a href="https://console.cloud.google.com/" target="_blank">Google Cloud Console</a> →
+        API ve Hizmetler → YouTube Data API v3 → Kimlik Bilgileri → API Anahtarı Oluştur<br><br>
+        <b>Not:</b> Anahtar yalnızca tarayıcınızda saklanır, hiçbir yere gönderilmez.
+      </div>
+    </div>
+
+    <div class="sched-card">
+      <div class="sched-head">
+        <span style="font-size:18px">📅</span>
+        <div class="sched-head-text">YAYИН AKIŞI</div>
+      </div>
+      <div class="sched-day-tabs" id="dayTabs"></div>
+      <div class="sched-list" id="schedList"></div>
+    </div>
+
+  </div>
+</div>
+
+<footer>CN TÜRKİYE 7/24 CANLI TV &nbsp;•&nbsp; Cartoon Network © Turner Broadcasting</footer>
+
+<script src="https://www.youtube.com/iframe_api"></script>
+<script>
+// ═══════════════════════════════════════════════
+// SHOW LIBRARY — 18 Türkçe CN dizisi
+// ═══════════════════════════════════════════════
+const SHOWS = [
+  { id:'ben10',       name:'Ben 10',                      emoji:'⚡', dur:22, q:'Ben 10 Türkçe Dublaj tam bölüm cartoon network' },
+  { id:'gumball',     name:"Gumball'ın Müthiş Dünyası",   emoji:'🐱', dur:22, q:'Gumball Türkçe Dublaj tam bölüm cartoon network' },
+  { id:'ppg',         name:'Powerpuff Girls',             emoji:'💥', dur:22, q:'Powerpuff Girls Türkçe Dublaj cartoon network' },
+  { id:'steven',      name:'Steven Universe',             emoji:'💎', dur:22, q:'Steven Universe Türkçe Dublaj cartoon network' },
+  { id:'adventure',   name:'Adventure Time',              emoji:'⚔️', dur:22, q:'Adventure Time Türkçe Dublaj cartoon network' },
+  { id:'regular',     name:'Regular Show',                emoji:'🎵', dur:22, q:'Regular Show Türkçe Dublaj cartoon network' },
+  { id:'dexter',      name:"Dexter'ın Laboratuvarı",      emoji:'🔬', dur:22, q:"Dexter Laboratory Türkçe Dublaj cartoon network" },
+  { id:'johnny',      name:'Johnny Bravo',                emoji:'💪', dur:22, q:'Johnny Bravo Türkçe Dublaj cartoon network' },
+  { id:'ededd',       name:'Ed, Edd n Eddy',              emoji:'🍬', dur:22, q:'Ed Edd n Eddy Türkçe Dublaj cartoon network' },
+  { id:'courage',     name:'Korkak Cesur Köpek',          emoji:'😱', dur:22, q:'Courage Cowardly Dog Türkçe Dublaj cartoon network' },
+  { id:'ok',          name:'OK K.O.!',                    emoji:'🥊', dur:11, q:'OK KO Lets Be Heroes Türkçe Dublaj cartoon network' },
+  { id:'chowder',     name:'Chowder',                     emoji:'🍲', dur:11, q:'Chowder Türkçe Dublaj cartoon network' },
+  { id:'weasel',      name:'Gelincik Bayım',              emoji:'🦡', dur:11, q:'I Am Weasel Türkçe Dublaj cartoon network' },
+  { id:'ben10af',     name:'Ben 10: Uzaylı Güç',          emoji:'🛸', dur:22, q:'Ben 10 Alien Force Türkçe Dublaj cartoon network' },
+  { id:'kids',        name:'Kids Next Door',              emoji:'🌳', dur:22, q:'Codename Kids Next Door Türkçe Dublaj cartoon network' },
+  { id:'cow',         name:'İnek ve Tavuk',               emoji:'🐮', dur:11, q:'Cow and Chicken Türkçe Dublaj cartoon network' },
+  { id:'over',        name:'Over the Garden Wall',        emoji:'🍂', dur:11, q:'Over Garden Wall Türkçe Dublaj' },
+  { id:'flintstones', name:'Flintstones',                 emoji:'🦕', dur:22, q:'Flintstones Türkçe Dublaj cartoon network' },
+];
+
+// ═══════════════════════════════════════════════
+// SCHEDULE ENGINE
+// Seed = day-of-year → farklı gün = farklı akış
+// ═══════════════════════════════════════════════
+function seededRng(seed) {
+  let s = (seed * 1664525 + 1013904223) & 0x7FFFFFFF;
+  return function() {
+    s = (s * 1664525 + 1013904223) & 0x7FFFFFFF;
+    return s / 0x7FFFFFFF;
+  };
+}
+
+function dayOfYear(date) {
+  const start = new Date(date.getFullYear(), 0, 0);
+  return Math.floor((date - start) / 86400000);
+}
+
+function buildDaySchedule(offsetDays) {
+  const date = new Date();
+  date.setDate(date.getDate() + offsetDays);
+  date.setHours(0,0,0,0);
+  const doy = dayOfYear(date);
+  const rng = seededRng(doy * 31337);
+
+  // Shuffle show order for this day
+  const pool = [...SHOWS];
+  for (let i = pool.length - 1; i > 0; i--) {
+    const j = Math.floor(rng() * (i + 1));
+    [pool[i], pool[j]] = [pool[j], pool[i]];
+  }
+
+  const slots = [];
+  let minute = 0;
+  let poolIdx = 0;
+  let lastId = null;
+
+  while (minute < 1440) {
+    const show = pool[poolIdx % pool.length];
+    // Skip if same as last
+    if (show.id === lastId) { poolIdx++; continue; }
+    lastId = show.id;
+
+    const startH = Math.floor(minute / 60);
+    const startM = minute % 60;
+    const endMin = minute + show.dur;
+
+    slots.push({
+      show, startH, startM,
+      startTotalMin: minute,
+      endTotalMin: endMin,
+    });
+
+    minute = endMin;
+    poolIdx++;
+  }
+  return slots;
+}
+
+// Build schedule for: yesterday, today, tomorrow, day after
+const OFFSETS = [-1, 0, 1, 2];
+const OFFSET_LABELS = ['Dün', 'Bugün', 'Yarın', 'Öbür Gün'];
+const TR_DAYS = ['Pazar','Pazartesi','Salı','Çarşamba','Perşembe','Cuma','Cumartesi'];
+const TR_DAYS_SHORT = ['Paz','Pzt','Sal','Çar','Per','Cum','Cmt'];
+
+const schedules = OFFSETS.map(o => buildDaySchedule(o));
+
+let viewDay = 1; // today
+let apiKey = '';
+let ytPlayer = null;
+let playerReady = false;
+let currentSlotIdx = -1;
+let watchInterval = null;
+
+// ═══════════════════════════════════════════════
+// HELPERS
+// ═══════════════════════════════════════════════
+function padZ(n) { return String(n).padStart(2,'0'); }
+function fmtHM(h, m) { return padZ(h) + ':' + padZ(m); }
+function fmtSec(s) { s = Math.max(0, s); return Math.floor(s/60) + ':' + padZ(s%60); }
+function nowMins() { const n = new Date(); return n.getHours()*60 + n.getMinutes(); }
+
+function getCurrentSlotIdx(slots) {
+  const nm = nowMins();
+  for (let i = slots.length - 1; i >= 0; i--) {
+    if (slots[i].startTotalMin <= nm) return i;
+  }
+  return 0;
+}
+
+// ═══════════════════════════════════════════════
+// CLOCK
+// ═══════════════════════════════════════════════
+function updateClock() {
+  const n = new Date();
+  document.getElementById('clockEl').textContent =
+    padZ(n.getHours()) + ':' + padZ(n.getMinutes()) + ':' + padZ(n.getSeconds());
+  document.getElementById('dayBadge').textContent = TR_DAYS[n.getDay()];
+}
+setInterval(updateClock, 1000);
+updateClock();
+
+// ═══════════════════════════════════════════════
+// RENDER TABS
+// ═══════════════════════════════════════════════
+function renderTabs() {
+  const el = document.getElementById('dayTabs');
+  el.innerHTML = '';
+  OFFSETS.forEach((off, i) => {
+    const d = new Date();
+    d.setDate(d.getDate() + off);
+    const tab = document.createElement('div');
+    tab.className = 'day-tab' + (i === viewDay ? ' active' : '');
+    tab.innerHTML = `<div style="font-size:12px">${OFFSET_LABELS[i]}</div><div style="font-size:9px;opacity:.45">${TR_DAYS_SHORT[d.getDay()]} ${d.getDate()}</div>`;
+    tab.onclick = () => { viewDay = i; renderTabs(); renderSchedule(); };
+    el.appendChild(tab);
+  });
+}
+
+// ═══════════════════════════════════════════════
+// RENDER SCHEDULE LIST
+// ═══════════════════════════════════════════════
+function renderSchedule() {
+  const el = document.getElementById('schedList');
+  const slots = schedules[viewDay];
+  const isToday = viewDay === 1;
+  const activeIdx = isToday ? getCurrentSlotIdx(schedules[1]) : -1;
+
+  el.innerHTML = '';
+
+  // Show range: past 2 + next 20
+  const from = Math.max(0, activeIdx - 2);
+  const to   = isToday ? Math.min(slots.length, activeIdx + 20) : slots.length;
+
+  for (let i = (isToday ? from : 0); i < to; i++) {
+    const s = slots[i];
+    const isPast   = isToday && i < activeIdx;
+    const isActive = isToday && i === activeIdx;
+
+    const div = document.createElement('div');
+    div.className = 'sched-item' + (isActive?' active':'') + (isPast?' past':'');
+    div.innerHTML = `
+      <div class="si-time">${fmtHM(s.startH, s.startM)}</div>
+      <div class="si-emoji">${s.show.emoji}</div>
+      <div class="si-info">
+        <div class="si-name">${s.show.name}</div>
+        <div class="si-dur">${s.show.dur} dk &nbsp;•&nbsp; ${fmtHM(s.startH,s.startM)} – ${fmtHM(Math.floor(s.endTotalMin/60), s.endTotalMin%60)}</div>
+      </div>
+      ${isActive ? '<div class="playing-anim"><span></span><span></span><span></span></div>' : ''}
+    `;
+    if (isToday && !isPast) div.onclick = () => playSlot(i);
+    el.appendChild(div);
+  }
+
+  setTimeout(() => {
+    const act = el.querySelector('.active');
+    if (act) act.scrollIntoView({ behavior:'smooth', block:'center' });
+  }, 80);
+}
+
+// ═══════════════════════════════════════════════
+// NOW PLAYING BAR
+// ═══════════════════════════════════════════════
+function updateNowBar(idx) {
+  const s = schedules[1][idx];
+  const next = schedules[1][idx + 1];
+
+  document.getElementById('nowEmoji').textContent = s.show.emoji;
+  document.getElementById('nowTitle').textContent = s.show.name;
+  document.getElementById('nowMeta').textContent  =
+    fmtHM(s.startH, s.startM) + ' – ' +
+    fmtHM(Math.floor(s.endTotalMin/60), s.endTotalMin%60) +
+    '  •  ' + s.show.dur + ' dakika';
+  document.getElementById('statEmoji').textContent = s.show.emoji;
+
+  if (next) {
+    document.getElementById('nextInfo').textContent = next.show.name;
+    document.getElementById('nextTime').textContent = fmtHM(next.startH, next.startM);
+    document.getElementById('statNext').textContent = fmtHM(next.startH, next.startM);
+  }
+}
+
+function updateProgress() {
+  const slots = schedules[1];
+  const idx   = getCurrentSlotIdx(slots);
+  const s     = slots[idx];
+  const now   = new Date();
+  const elSec = (nowMins() - s.startTotalMin) * 60 + now.getSeconds();
+  const totSec = s.dur * 60;
+  const pct    = Math.min(100, (elSec / totSec) * 100);
+
+  document.getElementById('progFg').style.width = pct + '%';
+  document.getElementById('progElapsed').textContent = fmtSec(elSec);
+  document.getElementById('progTotal').textContent   = fmtSec(totSec);
+}
+
+// ═══════════════════════════════════════════════
+// YOUTUBE PLAYER
+// ═══════════════════════════════════════════════
+function onYouTubeIframeAPIReady() {
+  ytPlayer = new YT.Player('ytplayer', {
+    height: '100%', width: '100%', videoId: '',
+    playerVars: { autoplay:1, controls:1, rel:0, modestbranding:1, fs:1, hl:'tr', iv_load_policy:3, enablejsapi:1 },
+    events: {
+      onReady: () => {
+        playerReady = true;
+        if (apiKey) autoPlayNow();
+      },
+      onStateChange: (e) => {
+        if (e.data === YT.PlayerState.ENDED) {
+          const next = currentSlotIdx + 1;
+          if (next < schedules[1].length) playSlot(next);
+        }
+      }
+    }
+  });
+}
+
+// ═══════════════════════════════════════════════
+// SEARCH + PLAY
+// ═══════════════════════════════════════════════
+async function searchVideo(query) {
+  try {
+    const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${encodeURIComponent(query)}&type=video&videoEmbeddable=true&videoDuration=medium&relevanceLanguage=tr&maxResults=5&key=${apiKey}`;
+    const res = await fetch(url);
+    const data = await res.json();
+    if (data.error) {
+      showMsg('API Hatası: ' + data.error.message, false);
+      return null;
+    }
+    const items = (data.items || []).filter(i => i.id && i.id.videoId);
+    return items.length ? items[0].id.videoId : null;
+  } catch(e) {
+    return null;
+  }
+}
+
+async function playSlot(idx) {
+  if (!apiKey) { showMsg('Lütfen API anahtarını gir!', false); return; }
+  if (!playerReady) return;
+
+  currentSlotIdx = idx;
+  const slot = schedules[1][idx];
+
+  updateNowBar(idx);
+  renderSchedule();
+
+  document.getElementById('vidLoading').classList.remove('hidden');
+  document.getElementById('nowMeta').textContent = '🔍 Video aranıyor...';
+
+  const vid = await searchVideo(slot.show.q);
+  document.getElementById('vidLoading').classList.add('hidden');
+
+  if (vid) {
+    ytPlayer.loadVideoById(vid);
+    document.getElementById('nowMeta').textContent =
+      fmtHM(slot.startH, slot.startM) + ' – ' +
+      fmtHM(Math.floor(slot.endTotalMin/60), slot.endTotalMin%60) +
+      '  •  ' + slot.show.dur + ' dakika';
+  } else {
+    document.getElementById('nowMeta').textContent = '⚠️ Video bulunamadı — sonraki programa geçiliyor';
+    setTimeout(() => {
+      if (idx + 1 < schedules[1].length) playSlot(idx + 1);
+    }, 3000);
+  }
+}
+
+async function autoPlayNow() {
+  const idx = getCurrentSlotIdx(schedules[1]);
+  await playSlot(idx);
+  startWatcher();
+}
+
+function startWatcher() {
+  clearInterval(watchInterval);
+  watchInterval = setInterval(() => {
+    updateProgress();
+    // Automatically advance when the scheduled program changes
+    const idx = getCurrentSlotIdx(schedules[1]);
+    if (idx !== currentSlotIdx) {
+      playSlot(idx);
+    }
+  }, 1000);
+}
+
+// ═══════════════════════════════════════════════
+// API KEY
+// ═══════════════════════════════════════════════
+function connectApi() {
+  const v = document.getElementById('apiInput').value.trim();
+  if (!v || v.length < 25) { showMsg('❌ Geçersiz API anahtarı!', false); return; }
+  apiKey = v;
+  try { localStorage.setItem('cn_ytapi', v); } catch(e) {}
+  showMsg('✅ Bağlandı! Yayın başlatılıyor…', true);
+  updateEmbedCode();
+  if (playerReady) autoPlayNow();
+}
+
+function showMsg(txt, ok) {
+  const el = document.getElementById('apiMsg');
+  el.textContent = txt;
+  el.className = 'api-msg show ' + (ok ? 'ok' : 'err');
+  if (ok) setTimeout(() => el.classList.remove('show'), 4000);
+}
+
+function updateEmbedCode() {
+  const src = window.location.href.split('?')[0];
+  document.getElementById('embedBody').textContent =
+    `<iframe src="${src}" width="100%" height="620" frameborder="0" allowfullscreen allow="autoplay; encrypted-media; picture-in-picture" title="CN Türkiye 7/24 Canlı TV"></iframe>`;
+}
+
+function copyEmbed() {
+  const t = document.getElementById('embedBody').textContent;
+  navigator.clipboard.writeText(t).then(() => showMsg('✅ Embed kodu kopyalandı!', true));
+}
+
+// ═══════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════
+(function init() {
+  // Restore saved API key
+  try {
+    const saved = localStorage.getItem('cn_ytapi');
+    if (saved) { document.getElementById('apiInput').value = saved; apiKey = saved; }
+  } catch(e) {}
+
+  updateEmbedCode();
+  renderTabs();
+  renderSchedule();
+
+  // Refresh schedule display every minute
+  setInterval(() => {
+    if (viewDay === 1) renderSchedule();
+  }, 60000);
+})();
+</script>
+</body>
+</html>

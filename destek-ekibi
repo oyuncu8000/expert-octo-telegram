@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WoxPlus AI Destek</title>
+    <style>
+        :root {
+            --bg-gradient: radial-gradient(circle at top right, #1e1b4b, #020617);
+            --card-bg: rgba(15, 23, 42, 0.8);
+            --accent: linear-gradient(135deg, #3b82f6 0%, #2dd4bf 100%); /* WoxPlus temasına uygun mavi-turkuaz gradyan */
+            --text-color: #f8fafc;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background: var(--bg-gradient);
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow: hidden;
+        }
+
+        /* 3D Glassmorphism & Floating Animation */
+        #ai-container {
+            width: 95%;
+            max-width: 420px;
+            height: 650px;
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 30px;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6);
+            animation: float 5s ease-in-out infinite;
+            position: relative;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotateX(2deg); }
+            50% { transform: translateY(-15px) rotateX(-2deg); }
+        }
+
+        /* Header Area */
+        .header {
+            padding: 25px;
+            background: var(--accent);
+            text-align: center;
+            font-weight: 800;
+            font-size: 1.1rem;
+            letter-spacing: 1.5px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Chat History */
+        #chat-box {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            scrollbar-width: none;
+        }
+        #chat-box::-webkit-scrollbar { display: none; }
+
+        .message {
+            max-width: 80%;
+            padding: 14px 18px;
+            border-radius: 20px;
+            font-size: 14px;
+            line-height: 1.6;
+            transition: 0.3s;
+        }
+
+        .ai-msg {
+            background: rgba(255, 255, 255, 0.07);
+            align-self: flex-start;
+            border-bottom-left-radius: 5px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .user-msg {
+            background: var(--accent);
+            align-self: flex-end;
+            border-bottom-right-radius: 5px;
+            color: #000;
+            font-weight: 600;
+        }
+
+        /* Input Bar */
+        .input-wrapper {
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.2);
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        input {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 14px;
+            color: white;
+            outline: none;
+        }
+
+        button {
+            background: var(--accent);
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 15px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.3s;
+        }
+
+        button:hover { transform: scale(1.05) rotate(5deg); }
+
+        /* Responsive */
+        @media (max-width: 480px) {
+            #ai-container { height: 100vh; width: 100%; border-radius: 0; animation: none; }
+        }
+    </style>
+</head>
+<body>
+
+<div id="ai-container">
+    <div class="header">WOXPLUS DESTEK</div>
+    <div id="chat-box">
+        <div class="message ai-msg">
+            Merhaba! <b>WoxPlus</b> destek merkezine hoş geldin. Üyelik işlemlerin, giriş sorunların veya film önerileri için buradayım. Sana nasıl yardımcı olabilirim? 🚀
+        </div>
+    </div>
+    <div class="input-wrapper">
+        <input type="text" id="user-input" placeholder="Sorunuzu buraya yazın..." onkeypress="if(event.key==='Enter') sendMessage()">
+        <button onclick="sendMessage()">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2.5"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+        </button>
+    </div>
+</div>
+
+<script>
+    async function sendMessage() {
+        const input = document.getElementById("user-input");
+        const chat = document.getElementById("chat-box");
+        const text = input.value.trim();
+        if (!text) return;
+
+        // Kullanıcı mesajını ekle
+        chat.innerHTML += `<div class="message user-msg">${text}</div>`;
+        input.value = "";
+        chat.scrollTop = chat.scrollHeight;
+
+        const loading = document.createElement("div");
+        loading.className = "message ai-msg";
+        loading.innerText = "Bağlanıyorum...";
+        chat.appendChild(loading);
+
+        try {
+            const response = await fetch("https://api.llm7.io/v1/chat/completions", {
+                method: "POST",
+                headers: { "Content-Type": "application/json", "Authorization": "Bearer unused" },
+                body: JSON.stringify({
+                    model: "default",
+                    messages: [
+                        { 
+                            role: "system", 
+                            content: "Sen 'woxplus.tvx.org' film sitesinin resmi AI asistanısın. Görevin: 1- Kullanıcılara üyelik oluşturma, şifre sıfırlama ve giriş sorunlarında yardımcı olmak. 2- Sitedeki teknik hatalar için çözüm sunmak. 3- Kullanıcı tercihlerine göre film/dizi önerisi yapmak. ASLA kod yazma, görsel üretme. Yanıtların profesyonel, yardımsever ve kısa olsun. Site linkini referans verebilirsin." 
+                        },
+                        { role: "user", content: text }
+                    ]
+                })
+            });
+
+            const data = await response.json();
+            loading.remove();
+            chat.innerHTML += `<div class="message ai-msg">${data.choices[0].message.content}</div>`;
+            chat.scrollTop = chat.scrollHeight;
+        } catch (err) {
+            loading.innerText = "Üzgünüm, şu an teknik bir sorun yaşıyorum.";
+        }
+    }
+</script>
+
+</body>
+</html>
